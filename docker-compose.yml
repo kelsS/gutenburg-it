@@ -1,0 +1,60 @@
+# # Database container
+# my-wpdb:
+#   image: mariadb
+#   ports:
+#     - "8081:3306"
+#   environment:
+#     MYSQL_ROOT_PASSWORD: landingPageToolmysql
+
+# # LAMP Stack Container
+# my-wp:
+#   image: wordpress:4.9.4-php7.2-apache
+#   volumes:
+#     - ./:/var/www/html
+#   ports:
+#     - "8080:80"
+#   links:
+#     - my-wpdb:mysql
+#   environment:
+#     WORDPRESS_DB_PASSWORD: landingPageToolmysql
+
+# Database container
+gutenburgit-wpdb:
+  image: mariadb
+  ports:
+    - "8081:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: root   
+
+phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links: 
+        - gutenburgit-wpdb:mysql
+    ports:
+        - 8181:80
+    environment:
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+        MYSQL_ROOT_PASSWORD: root
+        PMA_HOST: gutenburgit-wpdb_1
+
+# LAMP Stack Container
+gutenburgit-wp:
+  image: wordpress:4.9.4-php7.2-apache
+  volumes:
+    - ./:/var/www/html
+  ports:
+    - "8080:80"
+  links:
+    - gutenburgit-wpdb:mysql
+  environment:
+    WORDPRESS_DB_PASSWORD: root
+
+#  You can now browse to http://localhost:8080/ and see your WordPress installation
+# PHPMYADMIN URL: http://localhost:8181
+# See Theme CSS Compiling http://localhost:8082/
+#  If you want to connect to mysql, just be sure to use the address 127.0.0.1 and the port 8081
+# https://medium.com/@tatemz/local-wordpress-development-with-docker-3-easy-steps-a7c375366b9
+
+# Command to backup database from database container
+# docker exec gutenburg-it_gutenburgit-wpdb_1 mysqldump -u root --password=root wpgi_gutenburg-it > wpgi_gutenburg-it_backup.sql
